@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query'
 import { createUser, deleteUser, getUserById, getUsers, updateUser } from './users/api.users'
 import type { UseMutationOptions, UseQueryOptions } from '@tanstack/react-query'
 import type { User } from './users/models.users'
@@ -63,6 +62,3 @@ export function deleteUserOptions(): UseMutationOptions<
     mutationFn: (params: { id: number }) => deleteUser({ data: { id: params.id } }),
   }
 }
-
-
-useQuery(getUserByIdOptions({id: 1}))
