@@ -9,10 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UsersRouteRouteImport } from './routes/users/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as UserIdIndexRouteImport } from './routes/$userId/index'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoTableRouteImport } from './routes/demo/table'
+import { Route as UsersUserIdIndexRouteImport } from './routes/users/$userId/index'
+import { Route as UsersUserIdEditRouteImport } from './routes/users/$userId/edit'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
 import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
@@ -24,14 +26,14 @@ import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr
 import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
 import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
 
+const UsersRouteRoute = UsersRouteRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UserIdIndexRoute = UserIdIndexRouteImport.update({
-  id: '/$userId/',
-  path: '/$userId/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
@@ -43,6 +45,16 @@ const DemoTableRoute = DemoTableRouteImport.update({
   id: '/demo/table',
   path: '/demo/table',
   getParentRoute: () => rootRouteImport,
+} as any)
+const UsersUserIdIndexRoute = UsersUserIdIndexRouteImport.update({
+  id: '/$userId/',
+  path: '/$userId/',
+  getParentRoute: () => UsersRouteRoute,
+} as any)
+const UsersUserIdEditRoute = UsersUserIdEditRouteImport.update({
+  id: '/$userId/edit',
+  path: '/$userId/edit',
+  getParentRoute: () => UsersRouteRoute,
 } as any)
 const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
   id: '/demo/start/server-funcs',
@@ -97,15 +109,17 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/users': typeof UsersRouteRouteWithChildren
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/$userId': typeof UserIdIndexRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/users/$userId/edit': typeof UsersUserIdEditRoute
+  '/users/$userId': typeof UsersUserIdIndexRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
@@ -113,15 +127,17 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/users': typeof UsersRouteRouteWithChildren
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/$userId': typeof UserIdIndexRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/users/$userId/edit': typeof UsersUserIdEditRoute
+  '/users/$userId': typeof UsersUserIdIndexRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
@@ -130,15 +146,17 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/users': typeof UsersRouteRouteWithChildren
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/$userId/': typeof UserIdIndexRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/users/$userId/edit': typeof UsersUserIdEditRoute
+  '/users/$userId/': typeof UsersUserIdIndexRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
@@ -148,15 +166,17 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/users'
     | '/demo/table'
     | '/demo/tanstack-query'
-    | '/$userId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/users/$userId/edit'
+    | '/users/$userId'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
@@ -164,15 +184,17 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/users'
     | '/demo/table'
     | '/demo/tanstack-query'
-    | '/$userId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/users/$userId/edit'
+    | '/users/$userId'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
@@ -180,15 +202,17 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/users'
     | '/demo/table'
     | '/demo/tanstack-query'
-    | '/$userId/'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/users/$userId/edit'
+    | '/users/$userId/'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
@@ -197,9 +221,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  UsersRouteRoute: typeof UsersRouteRouteWithChildren
   DemoTableRoute: typeof DemoTableRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
-  UserIdIndexRoute: typeof UserIdIndexRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoApiTqTodosRoute: typeof DemoApiTqTodosRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
@@ -214,18 +238,18 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/users': {
+      id: '/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof UsersRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/$userId/': {
-      id: '/$userId/'
-      path: '/$userId'
-      fullPath: '/$userId'
-      preLoaderRoute: typeof UserIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/tanstack-query': {
@@ -241,6 +265,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/demo/table'
       preLoaderRoute: typeof DemoTableRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/users/$userId/': {
+      id: '/users/$userId/'
+      path: '/$userId'
+      fullPath: '/users/$userId'
+      preLoaderRoute: typeof UsersUserIdIndexRouteImport
+      parentRoute: typeof UsersRouteRoute
+    }
+    '/users/$userId/edit': {
+      id: '/users/$userId/edit'
+      path: '/$userId/edit'
+      fullPath: '/users/$userId/edit'
+      preLoaderRoute: typeof UsersUserIdEditRouteImport
+      parentRoute: typeof UsersRouteRoute
     }
     '/demo/start/server-funcs': {
       id: '/demo/start/server-funcs'
@@ -315,11 +353,25 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface UsersRouteRouteChildren {
+  UsersUserIdEditRoute: typeof UsersUserIdEditRoute
+  UsersUserIdIndexRoute: typeof UsersUserIdIndexRoute
+}
+
+const UsersRouteRouteChildren: UsersRouteRouteChildren = {
+  UsersUserIdEditRoute: UsersUserIdEditRoute,
+  UsersUserIdIndexRoute: UsersUserIdIndexRoute,
+}
+
+const UsersRouteRouteWithChildren = UsersRouteRoute._addFileChildren(
+  UsersRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  UsersRouteRoute: UsersRouteRouteWithChildren,
   DemoTableRoute: DemoTableRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
-  UserIdIndexRoute: UserIdIndexRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoApiTqTodosRoute: DemoApiTqTodosRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,

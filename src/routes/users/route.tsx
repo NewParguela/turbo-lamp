@@ -1,10 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
-import { Link, createFileRoute } from '@tanstack/react-router';
-import type { User } from '@/features/users/models.users';
-import { getUsersOptions } from '@/features/rqOptions.user';
-import { cn } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query'
+import { Link, Outlet, createFileRoute, useMatchRoute } from '@tanstack/react-router'
+import type { User } from '@/features/users/models.users'
+import { getUsersOptions } from '@/features/rqOptions.user'
+import { cn } from '@/lib/utils'
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/users')({
   component: App, loader: async ({ context }) => {
     await context.queryClient.ensureQueryData(getUsersOptions())
   }
@@ -12,15 +12,29 @@ export const Route = createFileRoute('/')({
 
 function App() {
   const data = useQuery(getUsersOptions())
+  const match = useMatchRoute()
 
+  const hasOutlet = match({ to: Route.path }) === false
 
   return (
-    <main className='p-6 @container'>
-      <Link to="/users">
-        <div className='border shadow-xs p-4 rounded-md flex flex-col items-center justify-center hover:shadow-md transition-all duration-300'>
-          <h2>Users</h2>
+    <main className='p-6 relative'>
+      <h1>Users</h1>
+      <div className={cn('grid gap-4', hasOutlet ? 'md:grid-cols-2' : 'grid-cols-1')}>
+        {hasOutlet && (
+          <div className='w-full h-fit'>
+            <Outlet />
+          </div>
+        )}
+        <div className='@container'>
+          <div className='grid grid-cols-1 @lg:grid-cols-2 @xl:grid-cols-3 gap-4'>
+            {data.data?.map(_ =>
+              <Link key={_.id} to="/users/$userId" params={{ userId: _.id }}>
+                <UserCard key={_.id} user={_} />
+              </Link>
+            )}
+          </div>
         </div>
-      </Link>
+      </div>
     </main>
   )
 }
@@ -46,7 +60,7 @@ const UserCard = ({ user, className }: { user: User, className?: string }) => {
 //             className="w-24 h-24 md:w-32 md:h-32"
 //           />
 //           <h1 className="text-6xl md:text-7xl font-black text-white [letter-spacing:-0.08em]">
-//             <span className="text-gray-300">TANSTACK</span>{' '}
+//             <span className="text-gray-300">TANSTACK</span>{" "}
 //             <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
 //               START
 //             </span>

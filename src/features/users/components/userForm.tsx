@@ -13,7 +13,7 @@ const createUserSchema = z.object({
 
 type CreateUserForm = z.infer<typeof createUserSchema>
 
-export function UserForm({ user } : {user?: User, onSubmit: (user: User) => void, onReset: () => void}) {
+export function UserForm({ user }: { user?: User, onSubmit: (user: User) => void, onReset: () => void }) {
   const form = useAppForm({
     defaultValues: {
       email: user?.email ?? '',
@@ -37,7 +37,7 @@ export function UserForm({ user } : {user?: User, onSubmit: (user: User) => void
   })
 
   return (
-    <div className="w-full max-w-2xl p-8 rounded-xl backdrop-blur-md bg-black/50 shadow-xl border-8 border-black/10">
+    <div className="w-full max-w-2xl p-8 rounded-xl backdrop-blur-md shadow-xl">
       <h2 className="text-3xl font-bold mb-6 text-white">Create New User</h2>
       <form
         onSubmit={(e) => {
