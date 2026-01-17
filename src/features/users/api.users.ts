@@ -2,8 +2,8 @@ import { createServerFn } from '@tanstack/react-start'
 import { notFound } from '@tanstack/react-router'
 import { z } from 'zod'
 import { readData, writeData } from 'DB'
-import { UserSchema } from './model.users'
-import type { User } from './model.users'
+import { UserSchema } from './models.users'
+import type { User } from './models.users'
 
 let __data : Array<User> | undefined = undefined
 const getData = async (): Promise<Array<User>> => {

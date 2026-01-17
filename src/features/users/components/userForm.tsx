@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 import { createUser } from '../api.users'
-import type { User } from '../model.users'
+import type { User } from '../models.users'
 import { useAppForm } from '@/hooks/demo.form'
 
 const createUserSchema = z.object({
