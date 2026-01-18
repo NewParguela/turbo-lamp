@@ -4,69 +4,79 @@
     "email": "john.doe@example.com",
     "first_name": "John",
     "last_name": "Doe",
-    "avatar": "https://i.pravatar.cc/150?img=1"
+    "avatar": "https://i.pravatar.cc/150?img=1",
+    "phone": "+34612345678"
   },
   {
     "id": 2,
     "email": "jane.smith@example.com",
     "first_name": "Jane",
     "last_name": "Smith",
-    "avatar": "https://i.pravatar.cc/150?img=5"
+    "avatar": "https://i.pravatar.cc/150?img=5",
+    "phone": "+34623456789"
   },
   {
     "id": 3,
     "email": "michael.johnson@example.com",
     "first_name": "Michael",
     "last_name": "Johnson",
-    "avatar": "https://i.pravatar.cc/150?img=12"
+    "avatar": "https://i.pravatar.cc/150?img=12",
+    "phone": "+34634567890"
   },
   {
     "id": 4,
     "email": "emily.brown@example.com",
     "first_name": "Emily",
     "last_name": "Brown",
-    "avatar": "https://i.pravatar.cc/150?img=9"
+    "avatar": "https://i.pravatar.cc/150?img=9",
+    "phone": "+34645678901"
   },
   {
     "id": 5,
     "email": "david.wilson@example.com",
     "first_name": "David",
     "last_name": "Wilson",
-    "avatar": "https://i.pravatar.cc/150?img=33"
+    "avatar": "https://i.pravatar.cc/150?img=33",
+    "phone": "+34656789012"
   },
   {
     "id": 6,
     "email": "sarah.davis@example.com",
     "first_name": "Sarah",
     "last_name": "Davis",
-    "avatar": "https://i.pravatar.cc/150?img=45"
+    "avatar": "https://i.pravatar.cc/150?img=45",
+    "phone": "+34667890123"
   },
   {
     "id": 7,
     "email": "robert.miller@example.com",
     "first_name": "Robert",
     "last_name": "Miller",
-    "avatar": "https://i.pravatar.cc/150?img=13"
+    "avatar": "https://i.pravatar.cc/150?img=13",
+    "phone": "+34678901234"
   },
   {
     "id": 8,
     "email": "lisa.moore@example.com",
     "first_name": "Lisa",
     "last_name": "Moore",
-    "avatar": "https://i.pravatar.cc/150?img=20"
+    "avatar": "https://i.pravatar.cc/150?img=20",
+    "phone": "+34689012345"
   },
   {
     "id": 9,
     "email": "james.taylor@example.com",
     "first_name": "James",
     "last_name": "Taylor",
-    "avatar": "https://i.pravatar.cc/150?img=14"
+    "avatar": "https://i.pravatar.cc/150?img=14",
+    "phone": "+34690123456"
   },
   {
     "id": 10,
     "email": "maria.anderson@example.com",
     "first_name": "Maria",
     "last_name": "Anderson",
-    "avatar": "https://i.pravatar.cc/150?img=27"
+    "avatar": "https://i.pravatar.cc/150?img=27",
+    "phone": "+34701234567"
   }
 ]

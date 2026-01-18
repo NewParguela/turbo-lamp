@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getUserByIdOptions } from '@/features/rqOptions.user';
 import { Button } from '@/components/ui/button';
 
-export const Route = createFileRoute('/users/$userId/')({
+export const Route = createFileRoute('/contacts/$userId/')({
   params: {
     parse: ({ userId }) =>
       z.object({ userId: z.coerce.number() }).parse({ userId })
@@ -22,7 +22,7 @@ export const Route = createFileRoute('/users/$userId/')({
         <p className='text-sm text-muted-foreground'>{data.data?.email}</p>
         <div>
           <Button asChild>
-            <Link to={"/users/$userId/edit"} params={{ userId }}>
+            <Link to={"/contacts/$userId/edit"} params={{ userId }}>
               Edit
             </Link>
           </Button>

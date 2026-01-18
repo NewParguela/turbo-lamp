@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
 import { Link, createFileRoute } from '@tanstack/react-router';
 import type { User } from '@/features/users/models.users';
 import { getUsersOptions } from '@/features/rqOptions.user';
@@ -11,14 +10,11 @@ export const Route = createFileRoute('/')({
 })
 
 function App() {
-  const data = useQuery(getUsersOptions())
-
-
   return (
     <main className='p-6 @container'>
-      <Link to="/users">
+      <Link to="/contacts">
         <div className='border shadow-xs p-4 rounded-md flex flex-col items-center justify-center hover:shadow-md transition-all duration-300'>
-          <h2>Users</h2>
+          <h2>Contacts</h2>
         </div>
       </Link>
     </main>
