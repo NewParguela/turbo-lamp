@@ -11,7 +11,7 @@ function RouteComponent() {
       <div className='text-center text-sm text-muted-foreground'>No contact selected</div>
       <div className='flex items-center justify-center'>
         <Button asChild>
-          <Link to="/contacts/$userId/new" params={{ userId: 1 }}>
+          <Link to="/contacts/new">
             New Contact
           </Link>
         </Button>

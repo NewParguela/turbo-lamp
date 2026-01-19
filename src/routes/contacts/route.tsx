@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { Link, Outlet, createFileRoute, useMatchRoute } from '@tanstack/react-router';
+import { Link, Outlet, createFileRoute, useMatchRoute, useNavigate } from '@tanstack/react-router';
 import { Plus, Search } from 'lucide-react';
-import { useState } from 'react';
+import { z } from 'zod';
 import { getUsersOptions } from '@/features/rqOptions.user';
 import { cn } from '@/lib/utils';
 import { UsersList } from '@/features/users/components/userList';
@@ -10,42 +10,45 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 export const Route = createFileRoute('/contacts')({
-  component: App, loader: async ({ context }) => {
+  component: App,
+  validateSearch: z.object({
+    search: z.string().optional(),
+  }),
+  loader: async ({ context }) => {
     await context.queryClient.ensureQueryData(getUsersOptions())
   }
 })
 
 function App() {
-
+  const match = useMatchRoute()
+  const hasOutlet = match({ to: Route.path }) === false
 
   return (
-    <main className='p-6 relative'>
-      <h1>Users</h1>
-      <div className='grid gap-4 grid-cols-3'>
-        <div className='@container'>
-          <ContactsSidebar />
-        </div>
-        <div className='w-full h-fit col-span-2s'>
-          <Outlet />
-        </div>
+    <main className='flex h-screen w-full bg-background'>
+      <ContactsSidebar className={cn(hasOutlet && "hidden md:flex")} />
+      <div
+        className={cn(
+          "flex-1 bg-background",
+          !hasOutlet && "hidden md:block"
+        )}
+      >
+        <Outlet />
       </div>
     </main>
   )
 }
 
-const ContactsSidebar = () => {
+const ContactsSidebar = ({ className }: { className?: string }) => {
   const data = useQuery(getUsersOptions())
-  const [searchQuery, setSearchQuery] = useState('')
-  // const [activeTab, setActiveTab] = useState('all')
 
-  const match = useMatchRoute()
-  const hasOutlet = match({ to: Route.path }) === false
+  const { search } = Route.useSearch()
+  // const [activeTab, setActiveTab] = useState('all')
 
   return (
     <div
       className={cn(
         "flex h-full w-full flex-col border-r border-border bg-card md:w-[360px] md:max-w-[360px]",
-        hasOutlet && "hidden md:flex"
+        className
       )}
     >
       {/* Header */}
@@ -61,15 +64,7 @@ const ContactsSidebar = () => {
         </div>
 
         {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search contacts..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
-        </div>
+        <ContactSidebarSearch searchValue={search ?? ''} />
 
         {/* Tabs */}
         {/* <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as Tab)}>
@@ -100,5 +95,21 @@ const ContactsSidebar = () => {
     </div> */}
     </div>
 
+  )
+}
+
+
+const ContactSidebarSearch = ({ searchValue = "" }: { searchValue?: string }) => {
+  const navigate = useNavigate()
+  return (
+    <div className="relative">
+      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <Input
+        placeholder="Search contacts..."
+        value={searchValue}
+        onChange={(e) => navigate({ to: ".", search: (prev) => ({ ...prev, search: e.target.value }) })}
+        className="pl-9"
+      />
+    </div>
   )
 }

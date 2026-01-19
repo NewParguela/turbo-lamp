@@ -1,7 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { z } from 'zod'
-import { useQuery } from '@tanstack/react-query'
-import { getUserByIdOptions } from '@/features/rqOptions.user'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { getUserByIdOptions, updateUserOptions } from '@/features/rqOptions.user'
 import { UserForm } from '@/features/users/components/userForm'
 
 export const Route = createFileRoute('/contacts/$userId/edit')({
@@ -17,9 +17,21 @@ export const Route = createFileRoute('/contacts/$userId/edit')({
 
 function RouteComponent() {
   const { userId } = Route.useParams()
-  const data = useQuery(getUserByIdOptions({ id: userId }))
+  const navigate = useNavigate()
 
-  return <div className='flex items-center justify-center'>
-    <UserForm user={data.data} onSubmit={() => { }} onReset={() => { }} />
-  </div>
+  const user = useQuery(getUserByIdOptions({ id: userId }))
+
+  const mutation = useMutation({
+    ...updateUserOptions(), onSuccess: (data) => {
+      navigate({ to: '/contacts/$userId', params: { userId: userId } })
+    },
+  })
+
+  return (
+    <>
+      {user.data && (
+        <UserForm user={user.data} onSubmit={_ => mutation.mutateAsync({ id: user.data.id, user: _ })} onReset={mutation.reset} />
+      )}
+    </>
+  )
 }
