@@ -1,6 +1,7 @@
 import { useStore } from '@tanstack/react-form'
 
-import { useFieldContext, useFormContext } from '@/hooks/demo.form-context'
+import { Field, FieldDescription, FieldError, FieldLabel } from './ui/field'
+import { useFieldContext, useFormContext } from '@/hooks/formContext'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -45,26 +46,27 @@ function ErrorMessages({
 export function TextField({
   label,
   placeholder,
+  description,
 }: {
   label: string
   placeholder?: string
+  description?: string
 }) {
   const field = useFieldContext<string>()
   const errors = useStore(field.store, (state) => state.meta.errors)
 
   return (
-    <div>
-      <Label htmlFor={label} className="mb-2 text-xl font-bold">
-        {label}
-      </Label>
+    <Field>
+      <FieldLabel htmlFor={label}>{label}</FieldLabel>
       <Input
         value={field.state.value}
         placeholder={placeholder}
         onBlur={field.handleBlur}
         onChange={(e) => field.handleChange(e.target.value)}
       />
-      {field.state.meta.isTouched && <ErrorMessages errors={errors} />}
-    </div>
+      {description && <FieldDescription>{description}</FieldDescription>}
+      {field.state.meta.isTouched && <FieldError errors={errors} />}
+    </Field>
   )
 }
 
@@ -171,4 +173,41 @@ export function Switch({ label }: { label: string }) {
       {field.state.meta.isTouched && <ErrorMessages errors={errors} />}
     </div>
   )
+}
+
+
+export function PhoneField({ label, placeholder, description }: { label: string, placeholder?: string, description?: string }) {
+  const field = useFieldContext<string>()
+  const errors = useStore(field.store, (state) => state.meta.errors)
+
+  return (<Field>
+    <FieldLabel htmlFor={label}>{label}</FieldLabel>
+    <Input
+      type='tel'
+      inputMode='tel'
+      value={field.state.value}
+      placeholder={placeholder}
+      onBlur={field.handleBlur}
+      onChange={(e) => field.handleChange(e.target.value)}
+    />
+    {description && <FieldDescription>{description}</FieldDescription>}
+    {field.state.meta.isTouched && <FieldError errors={errors} />}
+  </Field>)
+
+  // return (
+  //   <div>
+  //     <Label htmlFor={label} className="mb-2 text-xl font-bold">
+  //       {label}
+  //     </Label>
+  //     <Input
+  //       type='tel'
+  //       inputMode='tel'
+  //       value={field.state.value}
+  //       placeholder={placeholder}
+  //       onBlur={field.handleBlur}
+  //       onChange={(e) => field.handleChange(e.target.value)}
+  //     />
+  //     {field.state.meta.isTouched && <ErrorMessages errors={errors} />}
+  //   </div>
+  // )
 }
