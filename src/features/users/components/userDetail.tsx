@@ -12,14 +12,10 @@ import { formatPhone } from "@/components/ui/phoneFormatter";
 
 interface UserDetailProps {
     user: User
-    onEdit: () => void
-    onDelete: () => void
 }
 
 export const UserDetail = ({
     user,
-    onEdit,
-    onDelete,
 }: UserDetailProps) => {
     return (
         <div className="flex h-full flex-col">
@@ -81,7 +77,6 @@ export const UserDetail = ({
                     <Button
                         variant="outline"
                         className="w-full justify-start gap-2 bg-transparent"
-                        onClick={onEdit}
                         asChild
                     >
                         <Link to="/contacts/$userId/edit" params={{ userId: user.id }}>
@@ -92,7 +87,6 @@ export const UserDetail = ({
                     <Button
                         variant="outline"
                         className="w-full justify-start gap-2 text-destructive hover:text-destructive bg-transparent"
-                        onClick={onDelete}
                     >
                         <Trash2 className="h-4 w-4" />
                         Delete Contact
