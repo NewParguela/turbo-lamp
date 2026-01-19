@@ -39,10 +39,9 @@ function App() {
 }
 
 const ContactsSidebar = ({ className }: { className?: string }) => {
-  const data = useQuery(getUsersOptions())
-
   const { search } = Route.useSearch()
-  // const [activeTab, setActiveTab] = useState('all')
+
+  const getUsersPaginated = useQuery(getUsersOptions({ search }))
 
   return (
     <div
@@ -82,7 +81,7 @@ const ContactsSidebar = ({ className }: { className?: string }) => {
       </div>
 
       {/* Contact List */}
-      <UsersList users={data.data ?? []} searchQuery='' selectedId={null} >
+      <UsersList users={getUsersPaginated.data?.data ?? []} searchQuery='' selectedId={null} >
         {(user) =>
           <Link key={user.id} to="/contacts/$userId" params={{ userId: user.id }}>
             <UserListItem user={user} />
@@ -90,9 +89,9 @@ const ContactsSidebar = ({ className }: { className?: string }) => {
       </UsersList>
 
       {/* Footer */}
-      {/* <div className="border-t border-border px-4 py-3 text-center text-sm text-muted-foreground">
-      {filteredContacts.length} {filteredContacts.length === 1 ? "contact" : "contacts"}
-    </div> */}
+      <div className="border-t border-border px-4 py-3 text-center text-sm text-muted-foreground">
+        {getUsersPaginated.data?.pagination.total} {getUsersPaginated.data?.pagination.total === 1 ? "contact" : "contacts"}
+      </div>
     </div>
 
   )

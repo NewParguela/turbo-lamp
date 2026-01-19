@@ -10,11 +10,23 @@ export const userKeys = {
   detail: (id: number) => [...userKeys.details(), id] as const,
 }
 
-// GET /users - Get all users
-export function getUsersOptions(): UseQueryOptions<Array<User>> {
+// GET /users - Get all users with filtering and pagination
+export function getUsersOptions(params?: {
+  search?: string
+  page?: number
+  pageSize?: number
+}): UseQueryOptions<{
+  data: Array<User>
+  pagination: {
+    page: number
+    pageSize: number
+    total: number
+    totalPages: number
+  }
+}> {
   return {
-    queryKey: userKeys.lists(),
-    queryFn: () => getUsers(),
+    queryKey: [...userKeys.lists(), params],
+    queryFn: () => getUsers({ data: params || {} }),
   }
 }
 
