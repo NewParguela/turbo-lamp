@@ -30,7 +30,7 @@ function RouteComponent() {
   return (
     <>
       {user.data && (
-        <UserForm user={user.data} onSubmit={_ => mutation.mutateAsync({ id: user.data.id, user: _ })} onReset={mutation.reset} />
+        <UserForm user={user.data} onSubmit={_ => mutation.mutateAsync({ id: user.data.id, user: _ })} onReset={() => navigate({ to: '..' })} />
       )}
     </>
   )

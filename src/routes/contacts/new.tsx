@@ -12,9 +12,9 @@ function RouteComponent() {
   const mutation = useMutation({
     ...createUserOptions(), onSuccess: (data) => {
       navigate({ to: '/contacts/$userId', params: { userId: data.id } })
-    },
+    }
   })
   return (
-    <UserForm onSubmit={mutation.mutateAsync} onReset={mutation.reset} />
+    <UserForm onSubmit={mutation.mutateAsync} onReset={() => navigate({ to: '/contacts' })} />
   )
 }

@@ -14,34 +14,26 @@ interface UserDetailProps {
     user: User
     onEdit: () => void
     onDelete: () => void
-    onToggleFavorite: () => void
 }
 
 export const UserDetail = ({
     user,
     onEdit,
     onDelete,
-    onToggleFavorite,
 }: UserDetailProps) => {
     return (
         <div className="flex h-full flex-col">
             {/* Header with avatar and name */}
             <div className="flex flex-col items-center border-b border-border bg-card px-6 py-8">
                 <UserAvatar
-                    avatar={user.avatar}
+                    avatar={user.avatar ?? undefined}
                     firstName={user.first_name}
-                    lastName={user.last_name}
+                    lastName={user.last_name ?? undefined}
                     size="xl"
                 />
                 <h2 className="mt-4 text-2xl font-semibold text-card-foreground">
                     {user.first_name} {user.last_name}
                 </h2>
-                {/* {user.company && (
-                    <div className="mt-1 flex items-center gap-1.5 text-muted-foreground">
-                        <Building2 className="h-4 w-4" />
-                        <span className="text-sm">{user.company}</span>
-                    </div>
-                )} */}
 
                 {/* Quick action buttons */}
                 <div className="mt-6 flex gap-3">
@@ -80,26 +72,12 @@ export const UserDetail = ({
                             {user.email && (
                                 <InfoRow label="Email" value={user.email} href={`mailto:${user.email}`} />
                             )}
-                            {/* {user.company && <InfoRow label="Company" value={user.company} />} */}
                         </div>
                     </CardContent>
                 </Card>
 
                 {/* Actions */}
                 <div className="flex flex-col gap-2">
-                    {/* <Button
-                        variant="outline"
-                        className="w-full justify-start gap-2 bg-transparent"
-                        onClick={onToggleFavorite}
-                    >
-                        <Star
-                            className={`h-4 w-4 ${user.isFavorite
-                                ? "fill-amber-400 text-amber-400"
-                                : "text-muted-foreground"
-                                }`}
-                        />
-                        {user.isFavorite ? "Remove from Favorites" : "Add to Favorites"}
-                    </Button> */}
                     <Button
                         variant="outline"
                         className="w-full justify-start gap-2 bg-transparent"
