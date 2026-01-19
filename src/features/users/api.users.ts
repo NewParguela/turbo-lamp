@@ -6,13 +6,18 @@ import { UserSchema } from './models.users'
 import type { User } from './models.users'
 
 let __data : Array<User> | undefined = undefined
+let __idCounter = 0
 const getData = async (): Promise<Array<User>> => {
     if (__data) return __data
     __data = await readData<Array<User>>()
+    __idCounter = Math.max(...__data.map(_ => _.id)) + 1
     return __data
 }
 const invalidateData = () => {
     __data = undefined
+}
+const getNextId = () => {
+    return __idCounter++
 }
 
 // GET /users - Get all users
@@ -36,7 +41,7 @@ export const getUserById = createServerFn({method : "GET"}).inputValidator(UserS
 // POST /users - Create a new user
 export const createUser = createServerFn({method: "POST"}).inputValidator(UserSchema.omit({id: true})).handler(async (params) => {
   const data = await getData()
-  const newUser = { ...params.data, id: data.length + 1 }
+  const newUser = { ...params.data, id: getNextId() }
   data.push(newUser)
   await writeData(data)
   invalidateData()

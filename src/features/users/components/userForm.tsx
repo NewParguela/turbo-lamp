@@ -1,79 +1,112 @@
-import { z } from 'zod'
-
-import { createUser } from '../api.users'
-import type { User } from '../models.users'
-import { useAppForm } from '@/hooks/demo.form'
+import { z } from 'zod';
+import { UserAvatar } from "./userAvatar";
+import type { User } from "../models.users";
+import { Button } from "@/components/ui/button";
+import { useAppForm } from "@/hooks/useAppForm";
 
 const createUserSchema = z.object({
-  email: z.email('Please enter a valid email address'),
-  first_name: z.string().min(1, 'First name is required'),
-  last_name: z.string().min(1, 'Last name is required'),
-  avatar: z.url('Please enter a valid URL for the avatar'),
+    phone: z.e164("Please enter a valid phone number").min(1, 'Phone is required'),
+    first_name: z.string().min(1, 'First name is required'),
+    last_name: z.string().min(1, 'Last name is required').nullable(),
+    email: z.email('Please enter a valid email address').nullable(),
+    avatar: z.url('Please enter a valid URL for the avatar').nullable(),
 })
 
 type CreateUserForm = z.infer<typeof createUserSchema>
+interface UserFormProps {
+    user?: User
+    onSubmit: (user: CreateUserForm) => (unknown | Promise<unknown>)
+    onReset?: () => unknown
+}
 
-export function UserForm({ user }: { user?: User, onSubmit: (user: User) => void, onReset: () => void }) {
-  const form = useAppForm({
-    defaultValues: {
-      email: user?.email ?? '',
-      first_name: user?.first_name ?? '',
-      last_name: user?.last_name ?? '',
-      avatar: user?.avatar ?? '',
-    } satisfies CreateUserForm,
-    validators: {
-      onBlur: createUserSchema,
-    },
-    onSubmit: async ({ value }) => {
-      try {
-        const newUser = await createUser(value)
-        alert(`User created successfully! ID: ${newUser.id}`)
-        // Reset form after successful submission
-        form.reset()
-      } catch (error) {
-        alert(`Failed to create user: ${error instanceof Error ? error.message : 'Unknown error'}`)
-      }
-    },
-  })
+export const UserForm = ({ user, onSubmit: onSubmitFn, onReset }: UserFormProps) => {
+    const form = useAppForm({
+        defaultValues: {
+            phone: user?.phone ?? '',
+            first_name: user?.first_name ?? '',
+            last_name: user?.last_name ?? null,
+            email: user?.email ?? null,
+            avatar: user?.avatar ?? null,
+        } satisfies CreateUserForm,
+        validators: {
+            onBlur: createUserSchema,
+        },
+        onSubmit: ({ value }) => {
 
-  return (
-    <div className="w-full max-w-2xl p-8 rounded-xl backdrop-blur-md shadow-xl">
-      <h2 className="text-3xl font-bold mb-6 text-white">Create New User</h2>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          form.handleSubmit()
-        }}
-        className="space-y-6"
-      >
-        <form.AppField name="email">
-          {(field) => <field.TextField label="Email" placeholder="user@example.com" />}
-        </form.AppField>
+            console.log("ON SUBMIT FIRED", value)
+            onSubmitFn(value)
+            console.log("ON SUBMIT FIRED")
+        }, onSubmitInvalid(props) {
+            console.log("ON SUBMIT INVALID FIRED", props.formApi.getAllErrors())
+        },
+    })
 
-        <form.AppField name="first_name">
-          {(field) => <field.TextField label="First Name" placeholder="John" />}
-        </form.AppField>
+    const isEditing = !!user
 
-        <form.AppField name="last_name">
-          {(field) => <field.TextField label="Last Name" placeholder="Doe" />}
-        </form.AppField>
+    return (
+        <div className="flex h-full flex-col bg-card">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-border px-4 py-3">
+                <Button variant="ghost" size="sm" type="reset" form='user-form'>
+                    Cancel
+                </Button>
+                <h2 className="font-semibold text-card-foreground">
+                    {isEditing ? "Edit Contact" : "New Contact"}
+                </h2>
+                <Button size="sm" type="submit" form='user-form'>
+                    {isEditing ? "Save" : "Done"}
+                </Button>
+            </div>
 
-        <form.AppField name="avatar">
-          {(field) => (
-            <field.TextField
-              label="Avatar URL"
-              placeholder="https://example.com/avatar.jpg"
-            />
-          )}
-        </form.AppField>
+            {/* Form */}
+            <form className="flex-1 overflow-auto" id='user-form'
+                onSubmit={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    form.handleSubmit()
+                }}
+                onReset={(e) => { e.preventDefault(); e.stopPropagation(); form.reset(); onReset?.() }}
+            >
+                {/* Avatar preview */}
+                <div className="flex flex-col items-center py-8">
+                    {isEditing ? (
+                        <UserAvatar
+                            avatar={form.getFieldValue("avatar") ?? undefined}
+                            firstName={form.getFieldValue("first_name") || "N"}
+                            lastName={form.getFieldValue("last_name") || "N"}
+                            size="xl"
+                        />
+                    ) : (
+                        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-muted">
+                            <span className="text-3xl text-muted-foreground">+</span>
+                        </div>
+                    )}
+                    <p className="mt-2 text-sm text-muted-foreground">
+                        {`${form.getFieldValue("first_name")} ${form.getFieldValue("last_name")}`.trim()}
+                    </p>
+                </div>
 
-        <div className="flex justify-end">
-          <form.AppForm>
-            <form.SubscribeButton label="Create User" />
-          </form.AppForm>
+                {/* Input fields */}
+                <div className="space-y-6 px-6 pb-6">
+                    <div className="space-y-4 rounded-lg bg-muted/30 p-4">
+                        <form.AppField name="first_name">
+                            {(field) => <field.TextField label="First name" placeholder="First name" />}
+                        </form.AppField>
+                        <form.AppField name="last_name">
+                            {(field) => <field.TextField label="Last name" placeholder="Last name" />}
+                        </form.AppField>
+                    </div>
+
+                    <div className="space-y-4 rounded-lg bg-muted/30 p-4">
+                        <form.AppField name="phone">
+                            {(field) => <field.PhoneField label="Phone" placeholder="Phone" />}
+                        </form.AppField>
+                        <form.AppField name="email">
+                            {(field) => <field.TextField label="Email" placeholder="Email" />}
+                        </form.AppField>
+                    </div>
+                </div>
+            </form>
         </div>
-      </form>
-    </div>
-  )
+    )
 }
