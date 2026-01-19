@@ -20,11 +20,50 @@ const getNextId = () => {
     return __idCounter++
 }
 
-// GET /users - Get all users
-export const getUsers = createServerFn({method : "GET"}).handler(
-    async () => {
-        const data = await getData()
-        return UserSchema.array().parse(data)
+// GET /users - Get all users with filtering, pagination, and sorting
+const GetUsersQuerySchema = z.object({
+  search: z.string().optional(),
+  page: z.coerce.number().int().positive().default(1),
+  pageSize: z.coerce.number().int().positive().max(100).default(10),
+})
+
+export const getUsers = createServerFn({method : "GET"})
+  .inputValidator(GetUsersQuerySchema)
+  .handler(async (params) => {
+    const { search, page, pageSize } = params.data
+    let data = await getData()
+    
+    // Filter by search query (phone, first_name, or last_name)
+    if (search) {
+      const searchLower = search.toLowerCase()
+      data = data.filter(user => 
+        user.phone.toLowerCase().includes(searchLower) ||
+        user.first_name.toLowerCase().includes(searchLower) ||
+        (user.last_name && user.last_name.toLowerCase().includes(searchLower))
+      )
+    }
+    
+    // Sort by first_name
+    data = data.sort((a, b) => 
+      a.first_name.localeCompare(b.first_name)
+    )
+    
+    // Calculate pagination
+    const total = data.length
+    const totalPages = Math.ceil(total / pageSize)
+    const startIndex = (page - 1) * pageSize
+    const endIndex = startIndex + pageSize
+    const paginatedData = data.slice(startIndex, endIndex)
+    
+    return {
+      data: UserSchema.array().parse(paginatedData),
+      pagination: {
+        page,
+        pageSize,
+        total,
+        totalPages,
+      }
+    }
 })
 
 // GET /users/:id - Get a single user by ID
