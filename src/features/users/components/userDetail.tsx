@@ -79,7 +79,7 @@ export const UserDetail = ({
                         className="w-full justify-start gap-2 bg-transparent"
                         asChild
                     >
-                        <Link to="/contacts/$userId/edit" params={{ userId: user.id }}>
+                        <Link to="/$userId/edit" params={{ userId: user.id }}>
                             <Pencil className="h-4 w-4" />
                             Edit Contact
                         </Link>
