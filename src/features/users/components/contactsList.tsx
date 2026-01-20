@@ -22,7 +22,8 @@ const UsersList = ({
 UsersList.Section = ({ children, letter, ...props }: { letter: string } & React.ComponentProps<"div">) => {
     return (
         <div {...props}>
-            <div className="sticky top-0 z-10 bg-muted/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground backdrop-blur-sm">
+            {/* <div className="sticky top-0 z-10 bg-muted/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground backdrop-blur-sm"> */}
+            <div className="sticky top-0 bg-muted/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground backdrop-blur-sm">
                 {letter}
             </div>
             <div>

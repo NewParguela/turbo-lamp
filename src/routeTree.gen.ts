@@ -9,17 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as RouteRouteImport } from './routes/route'
 import { Route as NewRouteImport } from './routes/new'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserIdIndexRouteImport } from './routes/$userId/index'
 import { Route as UserIdEditRouteImport } from './routes/$userId/edit'
 
-const RouteRoute = RouteRouteImport.update({
-  id: '',
-  path: '',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const NewRoute = NewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -56,7 +50,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '': typeof RouteRoute
   '/new': typeof NewRoute
   '/$userId/edit': typeof UserIdEditRoute
   '/$userId/': typeof UserIdIndexRoute
@@ -66,12 +59,11 @@ export interface FileRouteTypes {
   fullPaths: '/' | '/new' | '/$userId/edit' | '/$userId'
   fileRoutesByTo: FileRoutesByTo
   to: '/' | '/new' | '/$userId/edit' | '/$userId'
-  id: '__root__' | '/' | '' | '/new' | '/$userId/edit' | '/$userId/'
+  id: '__root__' | '/' | '/new' | '/$userId/edit' | '/$userId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  RouteRoute: typeof RouteRoute
   NewRoute: typeof NewRoute
   UserIdEditRoute: typeof UserIdEditRoute
   UserIdIndexRoute: typeof UserIdIndexRoute
@@ -79,13 +71,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '': {
-      id: ''
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof RouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/new': {
       id: '/new'
       path: '/new'
@@ -119,7 +104,6 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  RouteRoute: RouteRoute,
   NewRoute: NewRoute,
   UserIdEditRoute: UserIdEditRoute,
   UserIdIndexRoute: UserIdIndexRoute,
