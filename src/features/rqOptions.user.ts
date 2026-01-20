@@ -18,7 +18,7 @@ export function getUsersInfiniteOptions(params?: {
   pageSize?: number
 }) {
   return {
-    queryKey: [...userKeys.lists(), params],
+    queryKey: [...userKeys.lists(), params?.search],
     queryFn: ({ pageParam }) => getUsers({ data: { ...params, page: pageParam } }),
     initialPageParam: params?.page || 1,
     getNextPageParam: (lastPage) =>
@@ -78,17 +78,19 @@ export function updateUserOptions(queryClient?: QueryClient, extend?: Omit<Updat
         (oldData) => {
           if (!oldData) return oldData;
 
-          return {
+          const newData = {
             ...oldData,
             ...variables.user
           }
+          return newData
         })
 
-      queryClient?.setQueryData<InfiniteData<Awaited<ReturnType<typeof getUsers>>>>(userKeys.lists(),
+      queryClient?.setQueryData<InfiniteData<Awaited<ReturnType<typeof getUsers>>>>(getUsersInfiniteOptions({ search: undefined }).queryKey,
         (oldData) => {
+          console.log("OLD DATA", oldData)
           if (!oldData) return oldData;
 
-          return {
+          const newData = {
             ...oldData,
             pages: oldData.pages.map((page) => ({
               ...page,
@@ -97,8 +99,10 @@ export function updateUserOptions(queryClient?: QueryClient, extend?: Omit<Updat
               ),
             }))
           }
-        })
 
+          console.log("NEW DATA", newData)
+          return newData
+        })
 
     }
   }, extend) satisfies UpdateUserOptions

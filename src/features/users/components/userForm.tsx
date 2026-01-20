@@ -34,13 +34,10 @@ export const UserForm = ({ user, onSubmit: onSubmitFn, onReset }: UserFormProps)
             onBlur: createUserSchema,
         },
         onSubmit: ({ value }) => {
-
-            console.log("ON SUBMIT FIRED", value)
             onSubmitFn(value)
-            console.log("ON SUBMIT FIRED")
-        }, onSubmitInvalid(props) {
-            console.log("ON SUBMIT INVALID FIRED", props.formApi.getAllErrors())
         },
+        // onSubmitInvalid(props) {
+        // },
     })
 
     const isEditing = !!user
