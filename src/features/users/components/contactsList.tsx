@@ -1,3 +1,4 @@
+import { Loader2 } from "lucide-react"
 import { UserAvatar } from "./userAvatar"
 import type { User } from "../models.users"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -68,6 +69,13 @@ UsersList.NotFound = ({ hasSearchQuery, className, ...props }: { hasSearchQuery?
                 Try a different search term
             </p>
         )}
+    </div>
+)
+
+UsersList.Loading = ({ className, ...props }: Omit<React.ComponentProps<"div">, "children">) => (
+    <div className={cn("flex flex-col items-center justify-center p-4 text-center", className)} {...props}>
+        <Loader2 className="size-4 animate-spin" />
+        <p className="text-muted-foreground">Loading...</p>
     </div>
 )
 

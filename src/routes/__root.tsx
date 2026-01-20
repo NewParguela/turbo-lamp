@@ -34,9 +34,9 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     search: z.string().optional(),
   }),
   loaderDeps: (opts) => opts.search,
-  loader: async ({ context, deps: { search } }) => {
-    await context.queryClient.ensureInfiniteQueryData(getUsersInfiniteOptions({ search }))
-  },
+  // loader: async ({ context, deps: { search } }) => {
+  //   await context.queryClient.ensureInfiniteQueryData(getUsersInfiniteOptions({ search }))
+  // },
   head: () => ({
     meta: [
       {
@@ -159,19 +159,26 @@ const ContactsSidebar = ({ className }: { className?: string }) => {
 
       {/* Contact List */}
       <UsersList ref={wrapperRef} className="overflow-y-auto">
-        {getUsersPaginated.data?.pages[0]?.data.length === 0 && <UsersList.NotFound hasSearchQuery={!!search} />}
+        {getUsersPaginated.isLoading ? (<UsersList.Loading />) : (
+          <>
 
-        {Object.entries(groupedUsers).map(([letter, usersGroup]) => (
-          <UsersList.Section key={letter} letter={letter}>
-            {usersGroup.map((user) => (
-              <Link key={user.id} to="/$userId" params={{ userId: user.id }}>
-                <UsersList.SectionItem user={user} />
-              </Link>
+            {getUsersPaginated.data?.pages[0]?.data.length === 0 && <UsersList.NotFound hasSearchQuery={!!search} />}
+
+            {getUsersPaginated.isFetchingPreviousPage && <UsersList.Loading />}
+
+            {Object.entries(groupedUsers).map(([letter, usersGroup]) => (
+              <UsersList.Section key={letter} letter={letter}>
+                {usersGroup.map((user) => (
+                  <Link key={user.id} to="/$userId" params={{ userId: user.id }}>
+                    <UsersList.SectionItem user={user} />
+                  </Link>
+                ))}
+              </UsersList.Section>
             ))}
-          </UsersList.Section>
-        ))}
-
-        <span ref={childRef("bottom")} />
+            {getUsersPaginated.isFetchingNextPage && <UsersList.Loading />}
+            <span ref={childRef("bottom")} />
+          </>
+        )}
       </UsersList>
 
       {/* Footer */}

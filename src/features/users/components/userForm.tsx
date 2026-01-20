@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { useStore } from '@tanstack/react-form';
 import { UserAvatar } from "./userAvatar";
 import type { User } from "../models.users";
 import { Button } from "@/components/ui/button";
@@ -43,6 +44,10 @@ export const UserForm = ({ user, onSubmit: onSubmitFn, onReset }: UserFormProps)
 
     const isEditing = !!user
 
+    const formFirstName = useStore(form.store, (state) => state.values.first_name);
+    const formLastName = useStore(form.store, (state) => state.values.last_name) ?? "";
+    const formAvatar = useStore(form.store, (state) => state.values.avatar) ?? "";
+
     return (
         <div className="flex h-full flex-col bg-card">
             {/* Header */}
@@ -69,20 +74,22 @@ export const UserForm = ({ user, onSubmit: onSubmitFn, onReset }: UserFormProps)
             >
                 {/* Avatar preview */}
                 <div className="flex flex-col items-center py-8">
-                    {isEditing ? (
-                        <UserAvatar
-                            avatar={form.getFieldValue("avatar") ?? undefined}
-                            firstName={form.getFieldValue("first_name") || "N"}
-                            lastName={form.getFieldValue("last_name") || "N"}
-                            size="xl"
-                        />
-                    ) : (
-                        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-muted">
-                            <span className="text-3xl text-muted-foreground">+</span>
-                        </div>
-                    )}
+                    <button type="button" onClick={() => form.setFieldValue("avatar", `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 69) + 1}`)}>
+                        {formAvatar || formFirstName || formLastName ? (
+                            <UserAvatar
+                                avatar={formAvatar}
+                                firstName={formFirstName}
+                                lastName={formLastName}
+                                size="xl"
+                            />
+                        ) : (
+                            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-muted">
+                                <span className="text-3xl text-muted-foreground">+</span>
+                            </div>
+                        )}
+                    </button>
                     <p className="mt-2 text-sm text-muted-foreground">
-                        {`${form.getFieldValue("first_name")} ${form.getFieldValue("last_name")}`.trim()}
+                        {`${formFirstName} ${formLastName}`.trim() || "N/A"}
                     </p>
                 </div>
 

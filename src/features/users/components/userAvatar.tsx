@@ -34,7 +34,7 @@ export const UserAvatar = ({
     className,
 }: UserAvatarProps) => {
 
-    if (avatar) {
+    if (avatar && avatar.length > 0) {
         return (
             <img src={avatar} alt={firstName} className={cn('rounded-full', sizeClasses[size], className)} />
         )

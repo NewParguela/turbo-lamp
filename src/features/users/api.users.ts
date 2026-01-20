@@ -1,4 +1,4 @@
-import { createServerFn } from '@tanstack/react-start'
+import { createMiddleware, createServerFn } from '@tanstack/react-start'
 import { notFound } from '@tanstack/react-router'
 import { z } from 'zod'
 import { readData, writeData } from 'DB'
@@ -20,6 +20,11 @@ const getNextId = () => {
     return __idCounter++
 }
 
+const delayMiddleware = createMiddleware().server(async ({next}) => {
+  await new Promise(resolve => setTimeout(resolve, Math.random() * 500 + 100))
+  return await next()
+})
+
 // GET /users - Get all users with filtering, pagination, and sorting
 const GetUsersQuerySchema = z.object({
   search: z.string().optional(),
@@ -29,6 +34,7 @@ const GetUsersQuerySchema = z.object({
 
 export const getUsers = createServerFn({method : "GET"})
   .inputValidator(GetUsersQuerySchema)
+  .middleware([delayMiddleware])
   .handler(async (params) => {
     const { search, page, pageSize } = params.data
     let data = await getData()
@@ -67,7 +73,7 @@ export const getUsers = createServerFn({method : "GET"})
 })
 
 // GET /users/:id - Get a single user by ID
-export const getUserById = createServerFn({method : "GET"}).inputValidator(UserSchema.pick({id : true})).handler(async (params) => {
+export const getUserById = createServerFn({method : "GET"}).inputValidator(UserSchema.pick({id : true})).middleware([delayMiddleware]).handler(async (params) => {
     const data = await getData()
     const user = data.find(_ => _.id === params.data.id)
     if (!user) {
@@ -78,7 +84,7 @@ export const getUserById = createServerFn({method : "GET"}).inputValidator(UserS
 
 
 // POST /users - Create a new user
-export const createUser = createServerFn({method: "POST"}).inputValidator(UserSchema.omit({id: true})).handler(async (params) => {
+export const createUser = createServerFn({method: "POST"}).inputValidator(UserSchema.omit({id: true})).middleware([delayMiddleware]).handler(async (params) => {
   const data = await getData()
   const newUser = { ...params.data, id: getNextId() }
   data.push(newUser)
@@ -91,7 +97,7 @@ export const createUser = createServerFn({method: "POST"}).inputValidator(UserSc
 export const updateUser = createServerFn({method: "POST"}).inputValidator(z.object({
   id: UserSchema.shape.id,
   user: UserSchema.omit({id: true}).partial()
-})).handler(async (params) => {
+})).middleware([delayMiddleware]).handler(async (params) => {
   const data = await getData()
   const userIndex = data.findIndex(_ => _.id === params.data.id)
   if (userIndex === -1) {
@@ -105,7 +111,7 @@ export const updateUser = createServerFn({method: "POST"}).inputValidator(z.obje
 })
 
 // DELETE /users/:id - Delete a user
-export const deleteUser = createServerFn({method: "POST"}).inputValidator(UserSchema.pick({id: true})).handler(async (params) => {
+export const deleteUser = createServerFn({method: "POST"}).inputValidator(UserSchema.pick({id: true})).middleware([delayMiddleware]).handler(async (params) => {
   const data = await getData()
   const userIndex = data.findIndex(_ => _.id === params.data.id)
   if (userIndex === -1) {

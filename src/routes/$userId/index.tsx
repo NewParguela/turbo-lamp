@@ -1,8 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { Link, createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 import { useQuery } from '@tanstack/react-query';
+import { ChevronLeftIcon } from 'lucide-react';
 import { getUserByIdOptions } from '@/features/rqOptions.user';
 import { UserDetail } from '@/features/users/components/userDetail';
+import { Button } from '@/components/ui/button';
 
 export const Route = createFileRoute('/$userId/')({
   ssr: "data-only",
@@ -18,9 +20,19 @@ export const Route = createFileRoute('/$userId/')({
     const data = useQuery(getUserByIdOptions({ id: userId }))
     return (
       <>
-        {data.data && (
-          <UserDetail user={data.data} />
-        )}
+        <div className="block md:hidden fixed top-4 left-4">
+          <Button variant="ghost" size="sm" asChild>
+            <Link to="..">
+              <ChevronLeftIcon />
+              Back
+            </Link>
+          </Button>
+        </div >
+        {
+          data.data && (
+            <UserDetail user={data.data} />
+          )
+        }
       </>
     )
   },
