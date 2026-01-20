@@ -1,6 +1,7 @@
-import { createUser, deleteUser, getUserById, getUsers, updateUser } from './users/api.users'
-import type { UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions } from '@tanstack/react-query'
-import type { User } from './users/models.users'
+import { createUser, deleteUser, getUserById, getUsers, updateUser } from './users/api.users';
+import type { InfiniteData, QueryClient, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions } from '@tanstack/react-query';
+import type { User } from './users/models.users';
+import { mergeMutationOptions } from '@/lib/mergeMutationOptions';
 
 // Query Keys
 export const userKeys = {
@@ -18,7 +19,7 @@ export function getUsersInfiniteOptions(params?: {
 }) {
   return {
     queryKey: [...userKeys.lists(), params],
-    queryFn: ({pageParam}) => getUsers({ data: {...params, page: pageParam} }),
+    queryFn: ({ pageParam }) => getUsers({ data: { ...params, page: pageParam } }),
     initialPageParam: params?.page || 1,
     getNextPageParam: (lastPage) =>
       lastPage.pagination.page < lastPage.pagination.totalPages
@@ -51,35 +52,71 @@ export function getUserByIdOptions(
 }
 
 // POST /users - Create a new user
-export function createUserOptions(): UseMutationOptions<
+type CreateUserOptions = UseMutationOptions<
   User,
   Error,
   Omit<User, 'id'>
-> {
-  return {
+>
+export function createUserOptions(queryClient?: QueryClient, extend?: Omit<CreateUserOptions, "mutationFn">): CreateUserOptions {
+  return mergeMutationOptions({
     mutationFn: (user: Omit<User, 'id'>) => createUser({ data: user }),
-  }
+    onSuccess: () => {
+      queryClient?.invalidateQueries({ queryKey: userKeys.lists() })
+    },
+  }, extend) satisfies CreateUserOptions
 }
 
 // PUT /users/:id - Update an existing user
-export function updateUserOptions(): UseMutationOptions<
-  User,
-  Error,
-  { id: number; user: Partial<Omit<User, 'id'>> }
-> {
-  return {
+type UpdateUserOptions = UseMutationOptions<User, Error, { id: number; user: Partial<Omit<User, 'id'>> }>
+export function updateUserOptions(queryClient?: QueryClient, extend?: Omit<UpdateUserOptions, "mutationFn">) {
+
+  return mergeMutationOptions({
     mutationFn: (params: { id: number; user: Partial<Omit<User, 'id'>> }) =>
       updateUser({ data: params }),
-  }
+    onSuccess: (_data, variables) => {
+      queryClient?.setQueryData<Awaited<ReturnType<typeof getUserById>>>(userKeys.detail(variables.id),
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            ...variables.user
+          }
+        })
+
+      queryClient?.setQueryData<InfiniteData<Awaited<ReturnType<typeof getUsers>>>>(userKeys.lists(),
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page) => ({
+              ...page,
+              data: page.data.map((user) =>
+                user.id === variables.id ? { ...user, ...variables.user } : user
+              ),
+            }))
+          }
+        })
+
+
+    }
+  }, extend) satisfies UpdateUserOptions
 }
 
 // DELETE /users/:id - Delete a user
-export function deleteUserOptions(): UseMutationOptions<
+type DeleteUserOptions = UseMutationOptions<
   boolean,
   Error,
   { id: number }
-> {
-  return {
+>
+
+export function deleteUserOptions(queryClient?: QueryClient, extend?: Omit<DeleteUserOptions, "mutationFn">): DeleteUserOptions {
+  return mergeMutationOptions({
     mutationFn: (params: { id: number }) => deleteUser({ data: { id: params.id } }),
-  }
+    onSuccess: (_data, variables) => {
+      queryClient?.invalidateQueries({ queryKey: userKeys.lists() })
+      queryClient?.invalidateQueries({ queryKey: userKeys.detail(variables.id) })
+    },
+  }, extend) satisfies DeleteUserOptions
 }

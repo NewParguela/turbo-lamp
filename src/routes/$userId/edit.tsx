@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { z } from 'zod'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getUserByIdOptions, updateUserOptions } from '@/features/rqOptions.user'
 import { UserForm } from '@/features/users/components/userForm'
 
@@ -19,14 +19,11 @@ export const Route = createFileRoute('/$userId/edit')({
 function RouteComponent() {
   const { userId } = Route.useParams()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const user = useQuery(getUserByIdOptions({ id: userId }))
 
-  const mutation = useMutation({
-    ...updateUserOptions(), onSuccess: (data) => {
-      navigate({ to: '/$userId', params: { userId: userId } })
-    },
-  })
+  const mutation = useMutation(updateUserOptions(queryClient, { onSuccess: () => navigate({ to: '/$userId', params: { userId: userId } }) }))
 
   return (
     <>

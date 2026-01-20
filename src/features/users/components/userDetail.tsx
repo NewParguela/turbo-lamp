@@ -4,7 +4,7 @@ import React from "react";
 
 import { Mail, MessageSquare, Pencil, Phone, Trash2, Video } from "lucide-react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { UserAvatar } from "./userAvatar";
 import type { User } from "../models.users";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,8 @@ interface UserDetailProps {
 export const UserDetail = ({
     user,
 }: UserDetailProps) => {
-    const deleteUserMutation = useMutation(deleteUserOptions())
+    const queryClient = useQueryClient()
+    const deleteUserMutation = useMutation(deleteUserOptions(queryClient))
     const navigate = useNavigate()
     return (
         <div className="flex h-full flex-col">
