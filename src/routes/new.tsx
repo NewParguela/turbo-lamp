@@ -6,6 +6,13 @@ import { createUserOptions } from '@/features/users/rqOptions.user'
 export const Route = createFileRoute('/new')({
   component: RouteComponent,
   ssr: "data-only",
+  head: () => ({
+    meta: [
+      {
+        title: 'Contacts - New',
+      },
+    ],
+  }),
 
 })
 

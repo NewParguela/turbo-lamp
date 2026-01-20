@@ -11,7 +11,16 @@ export const Route = createFileRoute('/$userId/edit')({
       z.object({ userId: z.coerce.number() }).parse({ userId })
   },
   loader: async ({ context, params: { userId } }) => {
-    await context.queryClient.ensureQueryData(getUserByIdOptions({ id: userId }))
+    return await context.queryClient.ensureQueryData(getUserByIdOptions({ id: userId }))
+  },
+  head: ({ loaderData }) => {
+    return {
+      meta: [
+        {
+          title: `Contacts - ${loaderData?.first_name} ${loaderData?.last_name} - Edit`,
+        },
+      ],
+    }
   },
   component: RouteComponent,
 })
