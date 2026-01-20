@@ -3,12 +3,14 @@
 import React from "react";
 
 import { Mail, MessageSquare, Pencil, Phone, Trash2, Video } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
 import { UserAvatar } from "./userAvatar";
 import type { User } from "../models.users";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatPhone } from "@/components/ui/phoneFormatter";
+import { deleteUserOptions } from "@/features/rqOptions.user";
 
 interface UserDetailProps {
     user: User
@@ -17,6 +19,8 @@ interface UserDetailProps {
 export const UserDetail = ({
     user,
 }: UserDetailProps) => {
+    const deleteUserMutation = useMutation(deleteUserOptions())
+    const navigate = useNavigate()
     return (
         <div className="flex h-full flex-col">
             {/* Header with avatar and name */}
@@ -85,6 +89,10 @@ export const UserDetail = ({
                         </Link>
                     </Button>
                     <Button
+                        onClick={async () => {
+                            const res = await deleteUserMutation.mutateAsync({ id: user.id })
+                            if (res) { navigate({ to: "/" }) }
+                        }}
                         variant="outline"
                         className="w-full justify-start gap-2 text-destructive hover:text-destructive bg-transparent"
                     >

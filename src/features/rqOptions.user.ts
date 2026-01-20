@@ -75,7 +75,7 @@ export function updateUserOptions(): UseMutationOptions<
 
 // DELETE /users/:id - Delete a user
 export function deleteUserOptions(): UseMutationOptions<
-  void,
+  boolean,
   Error,
   { id: number }
 > {

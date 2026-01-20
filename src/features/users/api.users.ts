@@ -114,4 +114,6 @@ export const deleteUser = createServerFn({method: "POST"}).inputValidator(UserSc
   data.splice(userIndex, 1)
   await writeData(data)
   invalidateData()
+  
+  return true
 })
