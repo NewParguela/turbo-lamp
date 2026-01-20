@@ -10,7 +10,7 @@ import type { User } from "../models.users";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatPhone } from "@/components/ui/phoneFormatter";
-import { deleteUserOptions } from "@/features/rqOptions.user";
+import { deleteUserOptions } from "@/features/users/rqOptions.user";
 
 interface UserDetailProps {
     user: User

@@ -1,6 +1,6 @@
-import { createUser, deleteUser, getUserById, getUsers, updateUser } from './users/api.users';
+import { createUser, deleteUser, getUserById, getUsers, updateUser } from './api.users';
 import type { InfiniteData, QueryClient, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions } from '@tanstack/react-query';
-import type { User } from './users/models.users';
+import type { User } from './models.users';
 import { mergeMutationOptions } from '@/lib/mergeMutationOptions';
 
 // Query Keys

@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { z } from 'zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { getUserByIdOptions, updateUserOptions } from '@/features/rqOptions.user'
+import { getUserByIdOptions, updateUserOptions } from '@/features/users/rqOptions.user'
 import { UserForm } from '@/features/users/components/userForm'
 
 export const Route = createFileRoute('/$userId/edit')({

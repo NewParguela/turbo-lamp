@@ -2,7 +2,7 @@ import { Link, createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 import { useQuery } from '@tanstack/react-query';
 import { ChevronLeftIcon } from 'lucide-react';
-import { getUserByIdOptions } from '@/features/rqOptions.user';
+import { getUserByIdOptions } from '@/features/users/rqOptions.user';
 import { UserDetail } from '@/features/users/components/userDetail';
 import { Button } from '@/components/ui/button';
 

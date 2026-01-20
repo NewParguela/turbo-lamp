@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { UserForm } from '@/features/users/components/userForm'
-import { createUserOptions } from '@/features/rqOptions.user'
+import { createUserOptions } from '@/features/users/rqOptions.user'
 
 export const Route = createFileRoute('/new')({
   component: RouteComponent,

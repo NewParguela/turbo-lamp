@@ -16,7 +16,7 @@ import appCss from '../styles.css?url';
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools';
 import type { User } from '@/features/users/models.users';
 import type { QueryClient } from '@tanstack/react-query';
-import { getUsersInfiniteOptions } from '@/features/rqOptions.user';
+import { getUsersInfiniteOptions } from '@/features/users/rqOptions.user';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
