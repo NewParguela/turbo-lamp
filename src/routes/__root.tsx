@@ -20,7 +20,7 @@ import { getUsersInfiniteOptions } from '@/features/rqOptions.user';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { UsersList } from '@/features/users/components/contactsList';
+import { UsersList } from '@/features/users/components/usersList';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 
 
@@ -47,7 +47,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'Contacts',
       },
     ],
     links: [
