@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { useStore } from '@tanstack/react-form';
+import { Trash } from 'lucide-react';
 import { UserAvatar } from "./userAvatar";
 import type { User } from "../models.users";
 import { Button } from "@/components/ui/button";
@@ -74,20 +75,35 @@ export const UserForm = ({ user, onSubmit: onSubmitFn, onReset }: UserFormProps)
             >
                 {/* Avatar preview */}
                 <div className="flex flex-col items-center py-8">
-                    <button type="button" onClick={() => form.setFieldValue("avatar", `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 69) + 1}`)}>
-                        {(formAvatar || formFirstName || formLastName) ? (
-                            <UserAvatar
-                                avatar={formAvatar}
-                                firstName={formFirstName}
-                                lastName={formLastName}
-                                size="xl"
-                            />
-                        ) : (
-                            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-muted">
-                                <span className="text-3xl text-muted-foreground">+</span>
-                            </div>
-                        )}
-                    </button>
+                    <div className="relative">
+                        <button type="button" onClick={() => form.setFieldValue("avatar", `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 69) + 1}`)}>
+                            <span className="sr-only">Set random avatar</span>
+                            {(formAvatar || formFirstName || formLastName) ? (
+                                <UserAvatar
+                                    avatar={formAvatar}
+                                    firstName={formFirstName}
+                                    lastName={formLastName}
+                                    size="xl"
+                                />
+                            ) : (
+                                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-muted">
+                                    <span className="text-3xl text-muted-foreground">+</span>
+                                </div>
+                            )}
+                        </button>{
+                            formAvatar && (
+                                <Button variant="outline" size="icon-sm" type="button" className="rounded-full absolute bottom-0 right-0 shadow-2xs"
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                        form.setFieldValue("avatar", null)
+                                    }}>
+                                    <Trash className="size-3" />
+                                    <span className="sr-only">Remove avatar</span>
+                                </Button>
+                            )
+                        }
+                    </div>
                     <p className="mt-2 text-sm text-muted-foreground">
                         {`${formFirstName} ${formLastName}`.trim() || "N/A"}
                     </p>
