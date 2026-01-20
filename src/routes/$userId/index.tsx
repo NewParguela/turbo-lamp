@@ -4,7 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { getUserByIdOptions } from '@/features/rqOptions.user';
 import { UserDetail } from '@/features/users/components/userDetail';
 
-export const Route = createFileRoute('/contacts/$userId/')({
+export const Route = createFileRoute('/$userId/')({
+  ssr: "data-only",
   params: {
     parse: ({ userId }) =>
       z.object({ userId: z.coerce.number() }).parse({ userId })

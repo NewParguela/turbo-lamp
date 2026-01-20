@@ -1,27 +1,31 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { Link, Outlet, createFileRoute, useMatchRoute, useNavigate } from '@tanstack/react-router';
 import { Plus, Search } from 'lucide-react';
 import { z } from 'zod';
-import { getUsersOptions } from '@/features/rqOptions.user';
+import { useMemo } from 'react';
+import type { User } from '@/features/users/models.users';
+import { getUsersInfiniteOptions } from '@/features/rqOptions.user';
 import { cn } from '@/lib/utils';
-import { UsersList } from '@/features/users/components/userList';
-import { UserListItem } from '@/features/users/components/userListItem';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { UsersList } from '@/features/users/components/contactsList';
+import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 
-export const Route = createFileRoute('/contacts')({
+export const Route = createFileRoute('')({
   component: App,
+  ssr: "data-only",
   validateSearch: z.object({
     search: z.string().optional(),
   }),
-  loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(getUsersOptions())
+  loaderDeps: (opts) => opts.search,
+  loader: async ({ context, deps: { search } }) => {
+    await context.queryClient.ensureInfiniteQueryData(getUsersInfiniteOptions({ search }))
   }
 })
 
 function App() {
   const match = useMatchRoute()
-  const hasOutlet = match({ to: Route.path }) === false
+  const hasOutlet = match({ to: "/" }) === false
 
   return (
     <main className='flex h-screen w-full bg-background'>
@@ -41,7 +45,31 @@ function App() {
 const ContactsSidebar = ({ className }: { className?: string }) => {
   const { search } = Route.useSearch()
 
-  const getUsersPaginated = useQuery(getUsersOptions({ search }))
+  const getUsersPaginated = useInfiniteQuery(getUsersInfiniteOptions({ search }))
+
+
+  const { childRef, wrapperRef } = useIntersectionObserver({
+    onChange: () => {
+      getUsersPaginated
+    }
+  })
+
+  const groupedUsers = useMemo(() => {
+    const users: Array<User> = getUsersPaginated.data?.pages.flatMap(_ => _.data) ?? []
+    const groups: Record<string, Array<User>> = {}
+    const sorted = [...users].sort((a, b) =>
+      a.first_name.localeCompare(b.first_name)
+    )
+
+    for (const user of sorted) {
+      const letter = user.first_name[0].toUpperCase()
+      groups[letter] ??= []
+      groups[letter].push(user)
+    }
+
+    return groups
+
+  }, [getUsersPaginated.data?.pages])
 
   return (
     <div
@@ -55,7 +83,7 @@ const ContactsSidebar = ({ className }: { className?: string }) => {
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-card-foreground">Contacts</h1>
           <Button size="icon" variant="ghost" asChild>
-            <Link to="/contacts/new">
+            <Link to="/new">
               <Plus className="h-5 w-5" />
               <span className="sr-only">Add contact</span>
             </Link>
@@ -63,34 +91,29 @@ const ContactsSidebar = ({ className }: { className?: string }) => {
         </div>
 
         {/* Search */}
-        <ContactSidebarSearch searchValue={search ?? ''} />
-
-        {/* Tabs */}
-        {/* <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as Tab)}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="all" className="gap-2">
-              <Users className="h-4 w-4" />
-              All
-            </TabsTrigger>
-            <TabsTrigger value="favorites" className="gap-2">
-              <Star className="h-4 w-4" />
-              Favorites
-            </TabsTrigger>
-          </TabsList>
-        </Tabs> */}
+        <ContactSidebarSearch searchValue={search} />
       </div>
 
       {/* Contact List */}
-      <UsersList users={getUsersPaginated.data?.data ?? []} searchQuery='' selectedId={null} >
-        {(user) =>
-          <Link key={user.id} to="/contacts/$userId" params={{ userId: user.id }}>
-            <UserListItem user={user} />
-          </Link>}
+      <UsersList ref={wrapperRef} className="overflow-y-auto">
+        {getUsersPaginated.data?.pages[0]?.data.length === 0 && <UsersList.NotFound hasSearchQuery={!!search} />}
+
+        {Object.entries(groupedUsers).map(([letter, usersGroup]) => (
+          <UsersList.Section key={letter} letter={letter}>
+            {usersGroup.map((user) => (
+              <Link key={user.id} to="/$userId" params={{ userId: user.id }}>
+                <UsersList.SectionItem user={user} />
+              </Link>
+            ))}
+          </UsersList.Section>
+        ))}
+
+        <span ref={childRef("bottom")} />
       </UsersList>
 
       {/* Footer */}
       <div className="border-t border-border px-4 py-3 text-center text-sm text-muted-foreground">
-        {getUsersPaginated.data?.pagination.total} {getUsersPaginated.data?.pagination.total === 1 ? "contact" : "contacts"}
+        {getUsersPaginated.data?.pages[0]?.pagination.total} {getUsersPaginated.data?.pages[0]?.pagination.total === 1 ? "contact" : "contacts"}
       </div>
     </div>
 

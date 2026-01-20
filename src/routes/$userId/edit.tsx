@@ -4,7 +4,8 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { getUserByIdOptions, updateUserOptions } from '@/features/rqOptions.user'
 import { UserForm } from '@/features/users/components/userForm'
 
-export const Route = createFileRoute('/contacts/$userId/edit')({
+export const Route = createFileRoute('/$userId/edit')({
+  ssr: "data-only",
   params: {
     parse: ({ userId }) =>
       z.object({ userId: z.coerce.number() }).parse({ userId })
@@ -23,7 +24,7 @@ function RouteComponent() {
 
   const mutation = useMutation({
     ...updateUserOptions(), onSuccess: (data) => {
-      navigate({ to: '/contacts/$userId', params: { userId: userId } })
+      navigate({ to: '/$userId', params: { userId: userId } })
     },
   })
 
