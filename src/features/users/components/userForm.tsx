@@ -75,7 +75,7 @@ export const UserForm = ({ user, onSubmit: onSubmitFn, onReset }: UserFormProps)
                 {/* Avatar preview */}
                 <div className="flex flex-col items-center py-8">
                     <button type="button" onClick={() => form.setFieldValue("avatar", `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 69) + 1}`)}>
-                        {formAvatar || formFirstName || formLastName ? (
+                        {(formAvatar || formFirstName || formLastName) ? (
                             <UserAvatar
                                 avatar={formAvatar}
                                 firstName={formFirstName}

@@ -41,8 +41,9 @@ export const UserAvatar = ({
     }
 
     const initials = `${firstName[0] || ""}${lastName[0] || ""}`.toUpperCase()
-    const colorIndex =
-        (firstName.charCodeAt(0) + lastName.charCodeAt(0)) % colors.length
+    const firstInitialCode = firstName ? firstName.charCodeAt(0) : 0
+    const lastInitialCode = lastName ? lastName.charCodeAt(0) : 0
+    const colorIndex = (firstInitialCode + lastInitialCode) % colors.length
     const bgColor = colors[colorIndex]
 
     return (
