@@ -1,5 +1,5 @@
 import { createUser, deleteUser, getUserById, getUsers, updateUser } from './users/api.users'
-import type { UseMutationOptions, UseQueryOptions } from '@tanstack/react-query'
+import type { UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions } from '@tanstack/react-query'
 import type { User } from './users/models.users'
 
 // Query Keys
@@ -10,24 +10,33 @@ export const userKeys = {
   detail: (id: number) => [...userKeys.details(), id] as const,
 }
 
-// GET /users - Get all users with filtering and pagination
-export function getUsersOptions(params?: {
+// GET /users - Get all users with filtering and pagination (infinite)
+export function getUsersInfiniteOptions(params?: {
   search?: string
   page?: number
   pageSize?: number
-}): UseQueryOptions<{
-  data: Array<User>
-  pagination: {
-    page: number
-    pageSize: number
-    total: number
-    totalPages: number
-  }
-}> {
+}) {
   return {
     queryKey: [...userKeys.lists(), params],
-    queryFn: () => getUsers({ data: params || {} }),
-  }
+    queryFn: ({pageParam}) => getUsers({ data: {...params, page: pageParam} }),
+    initialPageParam: params?.page || 1,
+    getNextPageParam: (lastPage) =>
+      lastPage.pagination.page < lastPage.pagination.totalPages
+        ? lastPage.pagination.page + 1
+        : undefined,
+    getPreviousPageParam: (firstPage) =>
+      firstPage.pagination.page > 1
+        ? firstPage.pagination.page - 1
+        : undefined,
+  } satisfies UseInfiniteQueryOptions<{
+    data: Array<User>
+    pagination: {
+      page: number
+      pageSize: number
+      total: number
+      totalPages: number
+    }
+  }>
 }
 
 // GET /users/:id - Get a single user by ID
